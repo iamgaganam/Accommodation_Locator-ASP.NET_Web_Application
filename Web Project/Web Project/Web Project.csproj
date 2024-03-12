@@ -177,6 +177,15 @@
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="Site.Master" />
+    <Content Include="Web Forms\Admin\Admin Dashboard.aspx" />
+    <Content Include="Web Forms\Admin\AdminLogin.aspx" />
+    <Content Include="Web Forms\Landlord\LandlordDashboard.aspx" />
+    <Content Include="Web Forms\Landlord\LandlordLogin.aspx" />
+    <Content Include="Web Forms\Landlord\LandlordRegistration.aspx" />
+    <Content Include="Web Forms\Student\StudentDashboard.aspx" />
+    <Content Include="Web Forms\Student\StudentLogin.aspx" />
+    <Content Include="Web Forms\Warden\WardenDashboard.aspx" />
+    <Content Include="Web Forms\Warden\WardenLogin.aspx" />
     <Content Include="Web.config" />
     <Content Include="Bundle.config" />
     <Content Include="Site.Mobile.Master" />
@@ -202,13 +211,73 @@
     <Compile Include="Site.Mobile.Master.designer.cs">
       <DependentUpon>Site.Mobile.Master</DependentUpon>
     </Compile>
+    <Compile Include="Web Forms\Admin\Admin Dashboard.aspx.cs">
+      <DependentUpon>Admin Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Web Forms\Admin\Admin Dashboard.aspx.designer.cs">
+      <DependentUpon>Admin Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Web Forms\Admin\AdminLogin.aspx.cs">
+      <DependentUpon>AdminLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Web Forms\Admin\AdminLogin.aspx.designer.cs">
+      <DependentUpon>AdminLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Web Forms\Landlord\LandlordDashboard.aspx.cs">
+      <DependentUpon>LandlordDashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Web Forms\Landlord\LandlordDashboard.aspx.designer.cs">
+      <DependentUpon>LandlordDashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Web Forms\Landlord\LandlordLogin.aspx.cs">
+      <DependentUpon>LandlordLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Web Forms\Landlord\LandlordLogin.aspx.designer.cs">
+      <DependentUpon>LandlordLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Web Forms\Landlord\LandlordRegistration.aspx.cs">
+      <DependentUpon>LandlordRegistration.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Web Forms\Landlord\LandlordRegistration.aspx.designer.cs">
+      <DependentUpon>LandlordRegistration.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Web Forms\Student\StudentDashboard.aspx.cs">
+      <DependentUpon>StudentDashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Web Forms\Student\StudentDashboard.aspx.designer.cs">
+      <DependentUpon>StudentDashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Web Forms\Student\StudentLogin.aspx.cs">
+      <DependentUpon>StudentLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Web Forms\Student\StudentLogin.aspx.designer.cs">
+      <DependentUpon>StudentLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Web Forms\Warden\WardenDashboard.aspx.cs">
+      <DependentUpon>WardenDashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Web Forms\Warden\WardenDashboard.aspx.designer.cs">
+      <DependentUpon>WardenDashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Web Forms\Warden\WardenLogin.aspx.cs">
+      <DependentUpon>WardenLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Web Forms\Warden\WardenLogin.aspx.designer.cs">
+      <DependentUpon>WardenLogin.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Web Forms\Admin\" />
-    <Folder Include="Web Forms\Landlord\" />
-    <Folder Include="Web Forms\Student\" />
-    <Folder Include="Web Forms\Warden\" />
+    <Folder Include="Images\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
