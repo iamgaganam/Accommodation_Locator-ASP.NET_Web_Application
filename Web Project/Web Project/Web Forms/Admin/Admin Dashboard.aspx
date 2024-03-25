@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Admin Dashboard.aspx.cs" Inherits="Web_Project.Web_Forms.Admin.Admin_Dashboard" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Admin_Dashboard.aspx.cs" Inherits="Web_Project.Web_Forms.Admin.Admin_Dashboard" %>
 
 <!DOCTYPE html>
 
@@ -35,7 +35,8 @@
 
         input[type="text"],
         input[type="password"],
-        textarea {
+        textarea,
+        select {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -63,7 +64,6 @@
             grid-gap: 20px;
         }
 
-
         .card {
             background-color: #fff;
             border-radius: 8px;
@@ -71,7 +71,6 @@
             overflow: hidden;
             margin-bottom: 20px;
         }
-
 
         .card-header {
             background-color: #4CAF50;
@@ -88,6 +87,63 @@
                 margin-bottom: 10px;
                 line-height: 1.5;
             }
+
+        .pagination-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination {
+            display: inline-block;
+            padding-left: 0;
+            margin: 0;
+            border-radius: 4px;
+            list-style: none;
+        }
+
+        .page-item {
+            display: inline;
+            margin-right: 5px;
+        }
+
+        .page-link {
+            position: relative;
+            display: inline-block;
+            padding: 0.5rem 0.75rem;
+            line-height: 1.25;
+            color: #007bff;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+        }
+
+            .page-link:hover {
+                z-index: 2;
+                color: #0056b3;
+                text-decoration: none;
+                background-color: #e9ecef;
+                border-color: #dee2e6;
+            }
+
+            .page-link:focus {
+                z-index: 2;
+                outline: 0;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+        .page-item.active .page-link {
+            z-index: 1;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            cursor: auto;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
     </style>
 </head>
 <body>
@@ -95,8 +151,17 @@
         <h1>Welcome, Admin!</h1>
 
         <form runat="server">
-            <!-- Landlord Registration Form -->
-            <h2>Register Landlord</h2>
+            <!-- User Registration -->
+            <h2>User Registration</h2>
+            <label for="userTypeDropdown">Select User Type:</label>
+            <asp:DropDownList ID="userTypeDropdown" runat="server">
+                <asp:ListItem Value="Landlord">Landlord</asp:ListItem>
+                <asp:ListItem Value="Student">Student</asp:ListItem>
+                <asp:ListItem Value="Warden">Warden</asp:ListItem>
+            </asp:DropDownList><br />
+
+            <!-- Common User Registration Fields -->
+            <h2>Register User</h2>
             <label for="txtUsername">Username:</label>
             <asp:TextBox ID="txtUsername" runat="server" /><br />
             <label for="txtPassword">Password:</label>
@@ -109,40 +174,7 @@
             <asp:TextBox ID="txtLastName" runat="server" /><br />
             <label for="txtPhoneNumber">Phone Number:</label>
             <asp:TextBox ID="txtPhoneNumber" runat="server" /><br />
-            <asp:Button ID="btnRegisterLandlord" runat="server" Text="Register Landlord" OnClick="btnRegisterLandlord_Click" />
-
-            <!-- Student Account Creation -->
-            <h2>Register Student</h2>
-            <label for="txtStudentUsername">Username:</label>
-            <asp:TextBox ID="txtStudentUsername" runat="server" /><br />
-            <label for="txtStudentPassword">Password:</label>
-            <asp:TextBox ID="txtStudentPassword" runat="server" TextMode="Password" /><br />
-            <label for="txtStudentEmail">Email:</label>
-            <asp:TextBox ID="txtStudentEmail" runat="server" /><br />
-            <label for="txtStudentFirstName">First Name:</label>
-            <asp:TextBox ID="txtStudentFirstName" runat="server" /><br />
-            <label for="txtStudentLastName">Last Name:</label>
-            <asp:TextBox ID="txtStudentLastName" runat="server" /><br />
-            <label for="txtStudentPhoneNumber">Phone Number:</label>
-            <asp:TextBox ID="txtStudentPhoneNumber" runat="server" /><br />
-            <asp:Button ID="btnRegisterStudent" runat="server" Text="Register Student" OnClick="btnRegisterStudent_Click" />
-
-            <!-- Warden Registration Form -->
-            <h2>Register Warden</h2>
-            <label for="txtWardenUsername">Username:</label>
-            <asp:TextBox ID="txtWardenUsername" runat="server" /><br />
-            <label for="txtWardenPassword">Password:</label>
-            <asp:TextBox ID="txtWardenPassword" runat="server" TextMode="Password" /><br />
-            <label for="txtWardenEmail">Email:</label>
-            <asp:TextBox ID="txtWardenEmail" runat="server" /><br />
-            <label for="txtWardenFirstName">First Name:</label>
-            <asp:TextBox ID="txtWardenFirstName" runat="server" /><br />
-            <label for="txtWardenLastName">Last Name:</label>
-            <asp:TextBox ID="txtWardenLastName" runat="server" /><br />
-            <label for="txtWardenPhoneNumber">Phone Number:</label>
-            <asp:TextBox ID="txtWardenPhoneNumber" runat="server" /><br />
-            <asp:Button ID="btnRegisterWarden" runat="server" Text="Register Warden" OnClick="btnRegisterWarden_Click" />
-            <asp:HiddenField ID="HiddenField1" runat="server" />
+            <asp:Button ID="btnRegister" runat="server" Text="Register" OnClick="btnRegister_Click" />
 
             <!-- Article Posting -->
             <h2>Article Posting</h2>
@@ -150,13 +182,17 @@
             <input type="text" id="articleTitle" runat="server" /><br />
             <label for="articleContent">Content:</label>
             <textarea id="articleContent" runat="server" rows="5"></textarea><br />
-            <asp:Button ID="btnPostArticle" runat="server" Text="Post Article" OnClick="btnPostArticle_Click" />
+            <asp:Button ID="btnPostArticle" runat="server" Text="Post Article" OnClick="btnPostArticle_Click" OnClientClick="return validateArticleForm();" />
         </form>
     </div>
     <div>
-        <h2>Admin Posts </h2>
+        <h2>Admin Posts</h2>
+        <div id="articleContainer" runat="server"></div>
+        <div class="pagination-container">
+            <ul class="pagination">
+                <!-- Pagination elements will be added dynamically from code-behind -->
+            </ul>
+        </div>
     </div>
-    <div id="articleContainer" runat="server"></div>
-
 </body>
 </html>

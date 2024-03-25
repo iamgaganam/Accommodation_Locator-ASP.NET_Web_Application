@@ -11,7 +11,7 @@ namespace Web_Project.Web_Forms.Student
 {
 
 
-    public partial class StudentDashboard
+    public partial class StudentDashboard2
     {
 
         /// <summary>
@@ -24,12 +24,21 @@ namespace Web_Project.Web_Forms.Student
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// advertisementsRepeater control.
+        /// propertyCardsContainer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater advertisementsRepeater;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl propertyCardsContainer;
+
+        /// <summary>
+        /// awarenessPostCardsContainer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl awarenessPostCardsContainer;
     }
 }

@@ -179,6 +179,7 @@
     <Content Include="Site.Master" />
     <Content Include="Web Forms\Admin\Admin Dashboard.aspx" />
     <Content Include="Web Forms\Admin\AdminLogin.aspx" />
+    <Content Include="Web Forms\HomePage.aspx" />
     <Content Include="Web Forms\Landlord\LandlordDashboard.aspx" />
     <Content Include="Web Forms\Landlord\LandlordLogin.aspx" />
     <Content Include="Web Forms\Landlord\LandlordRegistration.aspx" />
@@ -224,6 +225,13 @@
     </Compile>
     <Compile Include="Web Forms\Admin\AdminLogin.aspx.designer.cs">
       <DependentUpon>AdminLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Web Forms\HomePage.aspx.cs">
+      <DependentUpon>HomePage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Web Forms\HomePage.aspx.designer.cs">
+      <DependentUpon>HomePage.aspx</DependentUpon>
     </Compile>
     <Compile Include="Web Forms\Landlord\LandlordDashboard.aspx.cs">
       <DependentUpon>LandlordDashboard.aspx</DependentUpon>

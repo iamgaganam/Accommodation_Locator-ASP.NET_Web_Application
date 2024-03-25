@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace Web_Project.Web_Forms.Admin
@@ -19,7 +15,29 @@ namespace Web_Project.Web_Forms.Admin
             }
         }
 
-        // Post Article.
+        private int currentPage = 1;
+        private int articlesPerPage = 5;
+
+        protected void btnRegister_Click(object sender, EventArgs e)
+        {
+            string userType = userTypeDropdown.SelectedValue;
+
+            switch (userType)
+            {
+                case "Landlord":
+                    RegisterLandlord();
+                    break;
+                case "Student":
+                    RegisterStudent();
+                    break;
+                case "Warden":
+                    RegisterWarden();
+                    break;
+                default:
+                    break;
+            }
+        }
+
         protected void btnPostArticle_Click(object sender, EventArgs e)
         {
             string title = articleTitle.Value.Trim();
@@ -61,7 +79,6 @@ namespace Web_Project.Web_Forms.Admin
                 }
                 catch (Exception ex)
                 {
-                   
                 }
             }
         }
@@ -70,7 +87,14 @@ namespace Web_Project.Web_Forms.Admin
         {
             string connectionString = ConfigurationManager.ConnectionStrings["ArticlesConStr"].ConnectionString;
 
-            string query = "SELECT Title, Content, RegistrationDateTime FROM Articles ORDER BY RegistrationDateTime DESC";
+            int startIndex = (currentPage - 1) * articlesPerPage;
+            int endIndex = startIndex + articlesPerPage;
+
+            string query = $@"SELECT Title, Content, RegistrationDateTime 
+                              FROM (SELECT ROW_NUMBER() OVER (ORDER BY RegistrationDateTime DESC) AS RowNum,
+                                           Title, Content, RegistrationDateTime 
+                                    FROM Articles) AS RowConstrainedResult
+                              WHERE RowNum > {startIndex} AND RowNum <= {endIndex}";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand(query, connection))
@@ -87,135 +111,97 @@ namespace Web_Project.Web_Forms.Admin
                         DateTime registrationDateTime = (DateTime)reader["RegistrationDateTime"];
 
                         string articleCard = $@"
-                    <div class='card'>
-                        <div class='card-header'>{title}</div>
-                        <div class='card-body'>
-                            <p>{content}</p>
-                            <p>Published on: {registrationDateTime.ToString("MMMM dd, yyyy")}</p>
-                        </div>
-                    </div>";
+                            <div class='card'>
+                                <div class='card-header'>{title}</div>
+                                <div class='card-body'>
+                                    <p>{content}</p>
+                                    <p>Published on: {registrationDateTime.ToString("MMMM dd, yyyy")}</p>
+                                </div>
+                            </div>";
                         articleContainer.InnerHtml += articleCard;
                     }
+
+                    // Display pagination links
+                    DisplayPaginationLinks();
                 }
                 catch (Exception ex)
                 {
-
                 }
             }
         }
 
-        // Warden Registration
-        protected void btnRegisterWarden_Click(object sender, EventArgs e)
+        private void DisplayPaginationLinks()
         {
-            string username = txtWardenUsername.Text.Trim();
-            string password = txtWardenPassword.Text.Trim();
-            string email = txtWardenEmail.Text.Trim();
-            string firstName = txtWardenFirstName.Text.Trim();
-            string lastName = txtWardenLastName.Text.Trim();
-            string phoneNumber = txtWardenPhoneNumber.Text.Trim();
+            string connectionString = ConfigurationManager.ConnectionStrings["ArticlesConStr"].ConnectionString;
 
-            InsertWarden(username, password, email, firstName, lastName, phoneNumber);
-        }
-
-        private void InsertWarden(string username, string password, string email, string firstName, string lastName, string phoneNumber)
-        {
-            string connectionString = ConfigurationManager.ConnectionStrings["WardenLogConStr"].ConnectionString;
-
-            string query = @"INSERT INTO Warden (Username, Password, Email, FirstName, LastName, PhoneNumber, RegistrationDate)
-                             VALUES (@Username, @Password, @Email, @FirstName, @LastName, @PhoneNumber, @RegistrationDate)";
+            // Count total number of articles
+            string countQuery = "SELECT COUNT(*) FROM Articles";
+            int totalArticles = 0;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(query, connection))
+            using (SqlCommand command = new SqlCommand(countQuery, connection))
             {
-                command.Parameters.AddWithValue("@Username", username);
-                command.Parameters.AddWithValue("@Password", password);
-                command.Parameters.AddWithValue("@Email", email);
-                command.Parameters.AddWithValue("@FirstName", firstName);
-                command.Parameters.AddWithValue("@LastName", lastName);
-                command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
-                command.Parameters.AddWithValue("@RegistrationDate", DateTime.Now);
-
                 try
                 {
                     connection.Open();
-
-                    int rowsAffected = command.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        string script = "<script>alert('Warden sucessfully registered!');</script>";
-                        ClientScript.RegisterStartupScript(this.GetType(), "InsertSuccess", script);
-                    }
-                    else
-                    {
-                        string script = "<script>alert('Warden registration failed!');</script>";
-                        ClientScript.RegisterStartupScript(this.GetType(), "InsertSuccess", script);
-                    }
+                    totalArticles = (int)command.ExecuteScalar();
                 }
                 catch (Exception ex)
                 {
-
                 }
             }
-        }
 
-        // Student Registration.
-        protected void btnRegisterStudent_Click(object sender, EventArgs e)
-        {
-            string username = txtStudentUsername.Text.Trim();
-            string password = txtStudentPassword.Text.Trim();
-            string email = txtStudentEmail.Text.Trim();
-            string firstName = txtStudentFirstName.Text.Trim();
-            string lastName = txtStudentLastName.Text.Trim();
-            string phoneNumber = txtStudentPhoneNumber.Text.Trim();
+            // Calculate total number of pages
+            int totalPages = (int)Math.Ceiling((double)totalArticles / articlesPerPage);
 
-            InsertStudent(username, password, email, firstName, lastName, phoneNumber);
-        }
+            // Display pagination links wrapped inside a container
+            string paginationHtml = "<div class='pagination-container'><nav aria-label='Page navigation example'><ul class='pagination'>";
 
-        private void InsertStudent(string username, string password, string email, string firstName, string lastName, string phoneNumber)
-        {
-            string connectionString = ConfigurationManager.ConnectionStrings["StudentLoginConStr"].ConnectionString;
-
-            string query = @"INSERT INTO Students (Username, Password, Email, FirstName, LastName, PhoneNumber, RegistrationDate)
-                             VALUES (@Username, @Password, @Email, @FirstName, @LastName, @PhoneNumber, @RegistrationDate)";
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(query, connection))
+            // Previous Button
+            paginationHtml += "<li class='page-item'>";
+            if (currentPage > 1)
             {
-                command.Parameters.AddWithValue("@Username", username);
-                command.Parameters.AddWithValue("@Password", password);
-                command.Parameters.AddWithValue("@Email", email);
-                command.Parameters.AddWithValue("@FirstName", firstName);
-                command.Parameters.AddWithValue("@LastName", lastName);
-                command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
-                command.Parameters.AddWithValue("@RegistrationDate", DateTime.Now);
+                paginationHtml += $"<a class='page-link' href='?page={currentPage - 1}' aria-label='Previous'><span aria-hidden='true'>&laquo;</span></a>";
+            }
+            paginationHtml += "</li>";
 
-                try
+            // Page Numbers
+            for (int i = 1; i <= totalPages; i++)
+            {
+                paginationHtml += $"<li class='page-item {(i == currentPage ? "active" : "")}'><a class='page-link' href='?page={i}'>{i}</a></li>";
+            }
+
+            // Next Button
+            paginationHtml += "<li class='page-item'>";
+            if (currentPage < totalPages)
+            {
+                paginationHtml += $"<a class='page-link' href='?page={currentPage + 1}' aria-label='Next'><span aria-hidden='true'>&raquo;</span></a>";
+            }
+            paginationHtml += "</li>";
+
+            paginationHtml += "</ul></nav></div>";
+
+            articleContainer.InnerHtml += paginationHtml;
+        }
+
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                if (Request.QueryString["page"] != null)
                 {
-                    connection.Open();
-
-                    int rowsAffected = command.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
+                    int page;
+                    if (int.TryParse(Request.QueryString["page"], out page))
                     {
-                        string script = "<script>alert('Student sucessfully registered!');</script>";
-                        ClientScript.RegisterStartupScript(this.GetType(), "InsertSuccess", script);
+                        currentPage = page;
+                        articleContainer.InnerHtml = string.Empty;
+                        DisplayArticles();
                     }
-                    else
-                    {
-                        string script = "<script>alert('Student registration failed!');</script>";
-                        ClientScript.RegisterStartupScript(this.GetType(), "InsertSuccess", script);
-                    }
-                }
-                catch (Exception ex)
-                {
-
                 }
             }
         }
 
-        // Landlord Registration.
-        protected void btnRegisterLandlord_Click(object sender, EventArgs e)
+        private void RegisterLandlord()
         {
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text.Trim();
@@ -224,15 +210,38 @@ namespace Web_Project.Web_Forms.Admin
             string lastName = txtLastName.Text.Trim();
             string phoneNumber = txtPhoneNumber.Text.Trim();
 
-            // Insert Landlord details to database method i created.
-            InsertLandlord(username, password, email, firstName, lastName, phoneNumber);
+            InsertUser("Landlords", username, password, email, firstName, lastName, phoneNumber);
         }
 
-        private void InsertLandlord(string username, string password, string email, string firstName, string lastName, string phoneNumber)
+        private void RegisterStudent()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["LandlordRegConStr"].ConnectionString;
+            string username = txtUsername.Text.Trim();
+            string password = txtPassword.Text.Trim();
+            string email = txtEmail.Text.Trim();
+            string firstName = txtFirstName.Text.Trim();
+            string lastName = txtLastName.Text.Trim();
+            string phoneNumber = txtPhoneNumber.Text.Trim();
 
-            string query = @"INSERT INTO Landlords (Username, Password, Email, FirstName, LastName, PhoneNumber, RegistrationDate)
+            InsertUser("Students", username, password, email, firstName, lastName, phoneNumber);
+        }
+
+        private void RegisterWarden()
+        {
+            string username = txtUsername.Text.Trim();
+            string password = txtPassword.Text.Trim();
+            string email = txtEmail.Text.Trim();
+            string firstName = txtFirstName.Text.Trim();
+            string lastName = txtLastName.Text.Trim();
+            string phoneNumber = txtPhoneNumber.Text.Trim();
+
+            InsertUser("Warden", username, password, email, firstName, lastName, phoneNumber);
+        }
+
+        private void InsertUser(string tableName, string username, string password, string email, string firstName, string lastName, string phoneNumber)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["WardenLogConStr"].ConnectionString;
+
+            string query = $@"INSERT INTO {tableName} (Username, Password, Email, FirstName, LastName, PhoneNumber, RegistrationDate)
                              VALUES (@Username, @Password, @Email, @FirstName, @LastName, @PhoneNumber, @RegistrationDate)";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -249,22 +258,22 @@ namespace Web_Project.Web_Forms.Admin
                 try
                 {
                     connection.Open();
+
                     int rowsAffected = command.ExecuteNonQuery();
 
                     if (rowsAffected > 0)
                     {
-                        string script = "<script>alert('Landlord sucessfully registered!');</script>";
+                        string script = $"<script>alert('{tableName} successfully registered!');</script>";
                         ClientScript.RegisterStartupScript(this.GetType(), "InsertSuccess", script);
                     }
                     else
                     {
-                        string script = "<script>alert('Landlord registration failed!');</script>";
+                        string script = $"<script>alert('{tableName} registration failed!');</script>";
                         ClientScript.RegisterStartupScript(this.GetType(), "InsertSuccess", script);
                     }
                 }
                 catch (Exception ex)
                 {
-
                 }
             }
         }
