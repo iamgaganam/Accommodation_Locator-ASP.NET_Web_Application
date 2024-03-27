@@ -5,6 +5,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{1C5BDA85-2B64-4576-9E72-CC10428D3807}|Web Project\\Web Project.csproj|c:\\users\\gagan\\onedrive\\documents\\github projects\\nsbm-accommodation-finder\\web project\\web project\\web forms\\homepage.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{1C5BDA85-2B64-4576-9E72-CC10428D3807}|Web Project\\Web Project.csproj|solutionrelative:web project\\web forms\\homepage.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1C5BDA85-2B64-4576-9E72-CC10428D3807}|Web Project\\Web Project.csproj|c:\\users\\gagan\\onedrive\\documents\\github projects\\nsbm-accommodation-finder\\web project\\web project\\web forms\\student\\studentlogin.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{1C5BDA85-2B64-4576-9E72-CC10428D3807}|Web Project\\Web Project.csproj|solutionrelative:web project\\web forms\\student\\studentlogin.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +30,20 @@
               "RelativeToolTip": "Web Project\\Web Forms\\HomePage.aspx",
               "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2024-03-25T06:52:01.302Z",
+              "WhenOpened": "2024-03-27T06:23:18.926Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "StudentLogin.aspx",
+              "DocumentMoniker": "C:\\Users\\gagan\\OneDrive\\Documents\\Github Projects\\NSBM-Accommodation-Finder\\Web Project\\Web Project\\Web Forms\\Student\\StudentLogin.aspx",
+              "RelativeDocumentMoniker": "Web Project\\Web Forms\\Student\\StudentLogin.aspx",
+              "ToolTip": "C:\\Users\\gagan\\OneDrive\\Documents\\Github Projects\\NSBM-Accommodation-Finder\\Web Project\\Web Project\\Web Forms\\Student\\StudentLogin.aspx",
+              "RelativeToolTip": "Web Project\\Web Forms\\Student\\StudentLogin.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2024-03-27T06:23:08.506Z",
               "EditorCaption": ""
             }
           ]
