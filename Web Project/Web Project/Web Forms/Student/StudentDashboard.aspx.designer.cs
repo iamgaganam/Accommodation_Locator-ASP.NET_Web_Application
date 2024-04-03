@@ -33,6 +33,15 @@ namespace Web_Project.Web_Forms.Student
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl propertyCardsContainer;
 
         /// <summary>
+        /// approvedProperties control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl approvedProperties;
+
+        /// <summary>
         /// awarenessPostCardsContainer control.
         /// </summary>
         /// <remarks>

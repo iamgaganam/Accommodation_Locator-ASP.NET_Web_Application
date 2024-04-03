@@ -79,99 +79,116 @@ CREATE TABLE Properties (
     CONSTRAINT FK_Properties_Landlords FOREIGN KEY (LandlordID) REFERENCES Landlords(LandlordID)
 );
 
+CREATE TABLE Reservations (
+    ReservationID INT IDENTITY(1,1) PRIMARY KEY,
+    PropertyID INT NOT NULL,
+    StudentID INT NOT NULL,
+    ReservationDateTime DATETIME DEFAULT GETDATE(),
+    Status NVARCHAR(20) NOT NULL, -- Status of the reservation (e.g., Pending, Accepted, Rejected)
+    CONSTRAINT FK_Reservations_Properties FOREIGN KEY (PropertyID) REFERENCES Properties(id),
+    CONSTRAINT FK_Reservations_Students FOREIGN KEY (StudentID) REFERENCES Users(UserID)
+);
+
 /* 
 
 Dataset
 
+-- Inserting sample data into Users table
 INSERT INTO Users (Username, Password, Email, FirstName, LastName, PhoneNumber)
 VALUES
-('user1', 'password1', 'user1@example.com', 'John', 'Doe', '1234567890'),
-('user2', 'password2', 'user2@example.com', 'Jane', 'Smith', '9876543210'),
-('user3', 'password3', 'user3@example.com', 'Michael', 'Johnson', '5551234567'),
-('user4', 'password4', 'user4@example.com', 'Emily', 'Brown', '5559876543'),
-('user5', 'password5', 'user5@example.com', 'David', 'Lee', '1112223333'),
-('user6', 'password6', 'user6@example.com', 'Sarah', 'Wilson', '4445556666'),
-('user7', 'password7', 'user7@example.com', 'Daniel', 'Martinez', '7778889999'),
-('user8', 'password8', 'user8@example.com', 'Olivia', 'Taylor', '2223334444'),
-('user9', 'password9', 'user9@example.com', 'William', 'Anderson', '6667778888'),
-('user10', 'password10', 'user10@example.com', 'Sophia', 'Hernandez', '9990001111');
+('landlord1', 'password1', 'landlord1@example.com', 'John', 'Doe', '123-456-7890'),
+('landlord2', 'password2', 'landlord2@example.com', 'Jane', 'Smith', '987-654-3210'),
+('student1', 'password1', 'student1@example.com', 'Alice', 'Johnson', '456-789-0123'),
+('student2', 'password2', 'student2@example.com', 'Bob', 'Brown', '789-012-3456'),
+('warden1', 'password1', 'warden1@example.com', 'Chris', 'Lee', '321-654-9870'),
+('admin1', 'adminpassword', 'admin1@example.com', 'Admin', 'Adminson', '999-999-9999'),
+('landlord3', 'password3', 'landlord3@example.com', 'Michael', 'Johnson', '111-222-3333'),
+('landlord4', 'password4', 'landlord4@example.com', 'Emily', 'Wilson', '444-555-6666'),
+('landlord5', 'password5', 'landlord5@example.com', 'David', 'Martinez', '777-888-9999'),
+('landlord6', 'password6', 'landlord6@example.com', 'Jessica', 'Brown', '666-777-8888');
 
-INSERT INTO Admin (Username, Password, Email, FirstName, LastName, PhoneNumber)
-VALUES
-('admin1', 'adminpass1', 'admin1@example.com', 'Admin', 'One', '1234567890'),
-('admin2', 'adminpass2', 'admin2@example.com', 'Admin', 'Two', '9876543210'),
-('admin3', 'adminpass3', 'admin3@example.com', 'Admin', 'Three', '5551234567'),
-('admin4', 'adminpass4', 'admin4@example.com', 'Admin', 'Four', '5559876543'),
-('admin5', 'adminpass5', 'admin5@example.com', 'Admin', 'Five', '1112223333'),
-('admin6', 'adminpass6', 'admin6@example.com', 'Admin', 'Six', '4445556666'),
-('admin7', 'adminpass7', 'admin7@example.com', 'Admin', 'Seven', '7778889999'),
-('admin8', 'adminpass8', 'admin8@example.com', 'Admin', 'Eight', '2223334444'),
-('admin9', 'adminpass9', 'admin9@example.com', 'Admin', 'Nine', '6667778888'),
-('admin10', 'adminpass10', 'admin10@example.com', 'Admin', 'Ten', '9990001111');
-
-INSERT INTO Landlords (Username, Password, Email, FirstName, LastName, PhoneNumber)
-VALUES
-('landlord1', 'landlordpass1', 'landlord1@example.com', 'Mark', 'Williams', '1234567890'),
-('landlord2', 'landlordpass2', 'landlord2@example.com', 'Emma', 'Jones', '9876543210'),
-('landlord3', 'landlordpass3', 'landlord3@example.com', 'James', 'Brown', '5551234567'),
-('landlord4', 'landlordpass4', 'landlord4@example.com', 'Sophie', 'Davis', '5559876543'),
-('landlord5', 'landlordpass5', 'landlord5@example.com', 'Chris', 'Wilson', '1112223333'),
-('landlord6', 'landlordpass6', 'landlord6@example.com', 'Lucy', 'Taylor', '4445556666'),
-('landlord7', 'landlordpass7', 'landlord7@example.com', 'Tom', 'Martinez', '7778889999'),
-('landlord8', 'landlordpass8', 'landlord8@example.com', 'Rachel', 'Johnson', '2223334444'),
-('landlord9', 'landlordpass9', 'landlord9@example.com', 'Adam', 'Anderson', '6667778888'),
-('landlord10', 'landlordpass10', 'landlord10@example.com', 'Maria', 'Hernandez', '9990001111');
-
-INSERT INTO Students (Username, Password, Email, FirstName, LastName, PhoneNumber)
-VALUES
-('student1', 'studentpass1', 'student1@example.com', 'Alex', 'Smith', '1234567890'),
-('student2', 'studentpass2', 'student2@example.com', 'Megan', 'Johnson', '9876543210'),
-('student3', 'studentpass3', 'student3@example.com', 'Ryan', 'Williams', '5551234567'),
-('student4', 'studentpass4', 'student4@example.com', 'Sophia', 'Brown', '5559876543'),
-('student5', 'studentpass5', 'student5@example.com', 'Ethan', 'Taylor', '1112223333'),
-('student6', 'studentpass6', 'student6@example.com', 'Lily', 'Davis', '4445556666'),
-('student7', 'studentpass7', 'student7@example.com', 'Noah', 'Martinez', '7778889999'),
-('student8', 'studentpass8', 'student8@example.com', 'Ava', 'Wilson', '2223334444'),
-('student9', 'studentpass9', 'student9@example.com', 'Logan', 'Jones', '6667778888'),
-('student10', 'studentpass10', 'student10@example.com', 'Isabella', 'Anderson', '9990001111');
-
-INSERT INTO Warden (Username, Password, Email, FirstName, LastName, PhoneNumber)
-VALUES
-('warden1', 'wardenpass1', 'warden1@example.com', 'Warden', 'One', '1234567890'),
-('warden2', 'wardenpass2', 'warden2@example.com', 'Warden', 'Two', '9876543210'),
-('warden3', 'wardenpass3', 'warden3@example.com', 'Warden', 'Three', '5551234567'),
-('warden4', 'wardenpass4', 'warden4@example.com', 'Warden', 'Four', '5559876543'),
-('warden5', 'wardenpass5', 'warden5@example.com', 'Warden', 'Five', '1112223333'),
-('warden6', 'wardenpass6', 'warden6@example.com', 'Warden', 'Six', '4445556666'),
-('warden7', 'wardenpass7', 'warden7@example.com', 'Warden', 'Seven', '7778889999'),
-('warden8', 'wardenpass8', 'warden8@example.com', 'Warden', 'Eight', '2223334444'),
-('warden9', 'wardenpass9', 'warden9@example.com', 'Warden', 'Nine', '6667778888'),
-('warden10', 'wardenpass10', 'warden10@example.com', 'Warden', 'Ten', '9990001111');
-
+-- Inserting sample data into Articles table
 INSERT INTO Articles (Title, Content, UserID)
 VALUES
-('Top 10 Tips for Finding Off-Campus Housing', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 1),
-('Navigating the Rental Market: A Student’s Guide', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 2),
-('The Ultimate Checklist for Renting Your First Apartment', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 3),
-('Budgeting for Rent: How to Manage Your Finances Wisely', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 4),
-('Roommate Etiquette: Living in Harmony with Others', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 5),
-('Decorating Your Dorm Room on a Budget', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 6),
-('Tips for Negotiating Your Lease Agreement', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 7),
-('Finding the Perfect Neighborhood: What to Look For', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 8),
-('Managing Utilities: Tips for Splitting Bills with Roommates', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 9),
-('Moving Out: A Step-by-Step Guide to a Smooth Transition', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 10);
+('Tips for Finding the Perfect Accommodation', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 6),
+('How to Choose the Right Roommate', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 6),
+('Budgeting Tips for Students', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 6),
+('Living Off-Campus: Pros and Cons', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 6),
+('Essential Items for Your First Apartment', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 6),
+('How to Negotiate Rent with Your Landlord', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 6),
+('Safety Tips for Renting a Property', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 6),
+('Decorating Your Rental Without Losing Your Deposit', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 6),
+('Finding Roommates: Dos and Don’ts', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 6),
+('Creating a Budget for Your Rent and Utilities', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 6);
 
+-- Inserting sample data into Landlords table
+INSERT INTO Landlords (Username, Password, Email, FirstName, LastName, PhoneNumber)
+VALUES
+('landlord7', 'password7', 'landlord7@example.com', 'Alex', 'Davis', '135-246-7890'),
+('landlord8', 'password8', 'landlord8@example.com', 'Emma', 'Thomas', '258-369-1470'),
+('landlord9', 'password9', 'landlord9@example.com', 'Olivia', 'Wilson', '147-258-3690'),
+('landlord10', 'password10', 'landlord10@example.com', 'James', 'Johnson', '369-147-2580'),
+('landlord11', 'password11', 'landlord11@example.com', 'Sophia', 'Brown', '258-147-3690'),
+('landlord12', 'password12', 'landlord12@example.com', 'Mia', 'Martinez', '369-258-1470'),
+('landlord13', 'password13', 'landlord13@example.com', 'Daniel', 'Taylor', '147-369-2580'),
+('landlord14', 'password14', 'landlord14@example.com', 'Charlotte', 'White', '258-369-1470'),
+('landlord15', 'password15', 'landlord15@example.com', 'Lucas', 'Lee', '369-258-1470'),
+('landlord16', 'password16', 'landlord16@example.com', 'Liam', 'Garcia', '147-258-3690');
+
+-- Inserting sample data into Students table
+INSERT INTO Students (Username, Password, Email, FirstName, LastName, PhoneNumber)
+VALUES
+('student3', 'password3', 'student3@example.com', 'Sarah', 'Taylor', '012-345-6789'),
+('student4', 'password4', 'student4@example.com', 'Alex', 'Davis', '135-246-7890'),
+('student5', 'password5', 'student5@example.com', 'Emma', 'Thomas', '258-369-1470'),
+('student6', 'password6', 'student6@example.com', 'Noah', 'White', '369-147-2580'),
+('student7', 'password7', 'student7@example.com', 'Olivia', 'Garcia', '147-258-3690'),
+('student8', 'password8', 'student8@example.com', 'William', 'Martinez', '258-147-3690'),
+('student9', 'password9', 'student9@example.com', 'James', 'Brown', '369-258-1470'),
+('student10', 'password10', 'student10@example.com', 'Sophia', 'Johnson', '147-369-2580'),
+('student11', 'password11', 'student11@example.com', 'Michael', 'Lee', '258-369-1470'),
+('student12', 'password12', 'student12@example.com', 'Liam', 'Smith', '369-258-1470');
+
+-- Inserting sample data into Warden table
+INSERT INTO Warden (Username, Password, Email, FirstName, LastName, PhoneNumber)
+VALUES
+('warden2', 'password2', 'warden2@example.com', 'Jessica', 'Wilson', '987-654-3210'),
+('warden3', 'password3', 'warden3@example.com', 'Michael', 'Smith', '123-456-7890'),
+('warden4', 'password4', 'warden4@example.com', 'Emily', 'Johnson', '987-654-1230'),
+('warden5', 'password5', 'warden5@example.com', 'David', 'Brown', '789-456-1230'),
+('warden6', 'password6', 'warden6@example.com', 'Olivia', 'Martinez', '147-258-3690'),
+('warden7', 'password7', 'warden7@example.com', 'Noah', 'Taylor', '369-147-2580'),
+('warden8', 'password8', 'warden8@example.com', 'Sophia', 'Jones', '258-369-1470'),
+('warden9', 'password9', 'warden9@example.com', 'Ethan', 'Garcia', '369-258-1470'),
+('warden10', 'password10', 'warden10@example.com', 'Ava', 'Anderson', '258-147-3690'),
+('warden11', 'password11', 'warden11@example.com', 'James', 'Wilson', '369-258-1470');
+
+-- Inserting sample data into Properties table
 INSERT INTO Properties (name, description, price, location, imageUrl, LandlordID, latitude, longitude, status)
 VALUES
-('Cozy Apartment near Campus', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 1200.00, '123 University Ave', 'https://example.com/apartment1.jpg', 1, '40.7128', '-74.0060', 1),
-('Spacious Studio in Downtown', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 1500.00, '456 Main St', 'https://example.com/apartment2.jpg', 2, '34.0522', '-118.2437', 1),
-('Charming Townhouse with Garden', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 1800.00, '789 Elm St', 'https://example.com/house1.jpg', 3, '51.5074', '-0.1278', 1),
-('Modern Loft with City Views', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 2000.00, '101 Oak St', 'https://example.com/apartment3.jpg', 4, '51.5074', '-0.1278', 1),
-('Coastal Condo with Ocean View', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 2500.00, '555 Beach Blvd', 'https://example.com/apartment4.jpg', 5, '34.0522', '-118.2437', 1),
-('Luxury Penthouse in Skyline Tower', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 5000.00, '1 Skyline Dr', 'https://example.com/penthouse.jpg', 6, '40.7128', '-74.0060', 1),
-('Quaint Cottage in Suburbia', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 1600.00, '222 Pine St', 'https://example.com/house2.jpg', 7, '40.7128', '-74.0060', 1),
-('Rustic Cabin Retreat in the Woods', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 1000.00, '333 Forest Rd', 'https://example.com/cabin.jpg', 8, '34.0522', '-118.2437', 1),
-('Urban Apartment with Rooftop Pool', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 2200.00, '777 High St', 'https://example.com/apartment5.jpg', 9, '51.5074', '-0.1278', 1),
-('Family Home with Large Backyard', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 2800.00, '999 Maple Ave', 'https://example.com/house3.jpg', 10, '51.5074', '-0.1278', 1); 
+('Cozy Apartment Near Campus', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 700, '123 Main St', 'https://example.com/apartment1.jpg', 1, '40.7128', '-74.0060', 1),
+('Spacious House with Garden', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 1200, '456 Elm St', 'https://example.com/house1.jpg', 2, '34.0522', '-118.2437', 1),
+('Studio Apartment with Modern Amenities', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 900, '789 Oak St', 'https://example.com/apartment2.jpg', 3, '51.5074', '-0.1278', 1),
+('Apartment with City View', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 1000, '101 Broadway', 'https://example.com/apartment3.jpg', 4, '40.7128', '-74.0060', 1),
+('Modern Loft in Downtown', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 850, '202 Pine St', 'https://example.com/loft1.jpg', 5, '34.0522', '-118.2437', 1),
+('Charming Townhouse Near Park', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 1100, '303 Oak St', 'https://example.com/townhouse1.jpg', 6, '51.5074', '-0.1278', 1),
+('Studio Apartment with River View', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 750, '404 River St', 'https://example.com/apartment4.jpg', 7, '40.7128', '-74.0060', 1),
+('Cozy Cottage in Suburbs', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 950, '505 Maple St', 'https://example.com/cottage1.jpg', 8, '34.0522', '-118.2437', 1),
+('Luxury Condo with Amenities', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 1500, '606 High St', 'https://example.com/condo1.jpg', 9, '51.5074', '-0.1278', 1),
+('Rustic Cabin Retreat', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel nisi eu massa eleifend interdum.', 800, '707 Forest St', 'https://example.com/cabin1.jpg', 10, '40.7128', '-74.0060', 1);
+
+-- Inserting sample data into Reservations table
+INSERT INTO Reservations (PropertyID, StudentID, Status)
+VALUES
+(1, 3, 'Pending'),
+(2, 4, 'Accepted'),
+(3, 5, 'Pending'),
+(4, 6, 'Pending'),
+(5, 7, 'Pending'),
+(6, 8, 'Pending'),
+(7, 9, 'Pending'),
+(8, 10, 'Pending'),
+(9, 11, 'Pending'),
+(10, 12, 'Pending');
 
 */

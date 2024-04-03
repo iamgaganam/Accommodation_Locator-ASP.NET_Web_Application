@@ -190,21 +190,10 @@
     </form>
 
     <!-- Section for property requests -->
-    <div id="propertyRequests">
-        <h2>Property Requests By Students</h2>
-        <div class="property-request" id="propertyRequest1">
-            <img src="property-image.jpg" alt="Property Image" class="property-image">
-            <div class="property-details">
-                <h3>Property Name</h3>
-                <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                <p>Price: $1000</p>
-                <p>Location: City, Country</p>
-            </div>
-            <div class="property-actions">
-                <button class="btn-approve">Approve</button>
-                <button class="btn-reject">Reject</button>
-            </div>
-        </div>
+    <div id="propertyRequests" runat="server">
+        <h2>Property Reservations By Students</h2>
+        <!-- Property requests will be dynamically generated here -->
     </div>
+
 </body>
 </html>

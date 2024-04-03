@@ -14,10 +14,22 @@ namespace Web_Project.Web_Forms.Student
         {
             if (!IsPostBack)
             {
-                currentPage = Request.QueryString["page"] != null ? Convert.ToInt32(Request.QueryString["page"]) : 1;
-                LoadProperties();
-                LoadAwarenessPosts(currentPage);
-                CalculateTotalPages();
+                // Check if the session variable containing student ID exists
+                if (Session["StudentID"] == null)
+                {
+                    // Redirect the user to the login page
+                    Response.Redirect("StudentLogin.aspx");
+                }
+                else
+                {
+                    // Proceed with loading the dashboard
+                    int studentID = Convert.ToInt32(Session["StudentID"]);
+                    currentPage = Request.QueryString["page"] != null ? Convert.ToInt32(Request.QueryString["page"]) : 1;
+                    LoadProperties();
+                    LoadAwarenessPosts(currentPage);
+                    CalculateTotalPages();
+                    LoadReservedProperties(studentID);
+                }
             }
         }
 
@@ -121,7 +133,6 @@ namespace Web_Project.Web_Forms.Student
         <p>Posted On: {registrationDateTime.ToString("MMMM dd, yyyy, hh:mm tt")}</p>
     </div>
 </div>";
-
                             // Add the awareness post card HTML to the page
                             awarenessPostCardsContainer.Controls.Add(new LiteralControl(awarenessPostCardHtml));
                         }
@@ -141,9 +152,62 @@ namespace Web_Project.Web_Forms.Student
                 {
                     connection.Open();
                     int totalPosts = Convert.ToInt32(command.ExecuteScalar());
-                    totalPages = (int)Math.Ceiling((double)totalPosts / 5); // Keeping 5 posts per page nigga
+                    totalPages = (int)Math.Ceiling((double)totalPosts / 5); // Keeping 5 posts per page
                 }
             }
+        }
+
+        private void LoadReservedProperties(int studentID)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["ReserveConStr"].ConnectionString;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand("SELECT p.name, p.description, p.price, p.location, p.imageUrl FROM Properties p INNER JOIN Reservations r ON p.id = r.PropertyID WHERE r.Status = 'Accepted' AND r.StudentID = @StudentID", connection);
+                command.Parameters.AddWithValue("@StudentID", studentID);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    string name = reader["name"].ToString();
+                    string description = reader["description"].ToString();
+                    decimal price = Convert.ToDecimal(reader["price"]);
+                    string location = reader["location"].ToString();
+                    string imageUrl = reader["imageUrl"].ToString();
+
+                    // Create HTML elements dynamically and add them to the page
+                    AddPropertyCardToPage(name, description, price, location, imageUrl);
+                }
+
+                reader.Close();
+            }
+        }
+
+        private void AddPropertyCardToPage(string name, string description, decimal price, string location, string imageUrl)
+        {
+            // Create property card dynamically
+            System.Web.UI.HtmlControls.HtmlGenericControl propertyCardDiv = new System.Web.UI.HtmlControls.HtmlGenericControl("div");
+            propertyCardDiv.Attributes["class"] = "property-card";
+
+            // Add image to property card
+            System.Web.UI.HtmlControls.HtmlImage image = new System.Web.UI.HtmlControls.HtmlImage();
+            image.Src = imageUrl;
+            image.Alt = "Property Image";
+            image.Attributes["class"] = "property-image";
+            propertyCardDiv.Controls.Add(image);
+
+            // Add property details to property card
+            System.Web.UI.HtmlControls.HtmlGenericControl propertyDetailsDiv = new System.Web.UI.HtmlControls.HtmlGenericControl("div");
+            propertyDetailsDiv.Attributes["class"] = "property-details";
+            propertyDetailsDiv.InnerHtml = "<p>" + description + "</p>" +
+                                           "<p>Price: $" + price.ToString() + "</p>" +
+                                           "<p>Location: " + location + "</p>";
+
+            propertyCardDiv.Controls.Add(propertyDetailsDiv);
+
+            // Add property card to approved-properties div
+            approvedProperties.Controls.Add(propertyCardDiv);
         }
     }
 }

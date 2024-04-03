@@ -16,10 +16,7 @@ namespace Web_Project.Web_Forms.Landlord
             if (!IsPostBack)
             {
                 LoadProperties();
-            }
-            else
-            {
-                LoadProperties();
+                LoadPendingReservations();
             }
         }
 
@@ -215,5 +212,62 @@ namespace Web_Project.Web_Forms.Landlord
             }
         }
 
+        private void LoadPendingReservations()
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["ReserveConStr"].ConnectionString;
+            string query = "SELECT Properties.id, Properties.name, Properties.description, Properties.price, Properties.location, Properties.imageUrl FROM Reservations INNER JOIN Properties ON Reservations.PropertyID = Properties.id WHERE Reservations.Status = 'Pending'";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(query, connection);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    int propertyId = Convert.ToInt32(reader["id"]);
+                    string propertyName = reader["name"].ToString();
+                    string description = reader["description"].ToString();
+                    decimal price = Convert.ToDecimal(reader["price"]);
+                    string location = reader["location"].ToString();
+                    string imageUrl = reader["imageUrl"].ToString();
+
+                    // Generate HTML for each pending reservation
+                    GeneratePropertyRequest(propertyId, propertyName, description, price, location, imageUrl);
+                }
+
+                reader.Close();
+            }
+        }
+
+        private void GeneratePropertyRequest(int propertyId, string propertyName, string description, decimal price, string location, string imageUrl)
+        {
+            string propertyHtml = $@"
+                <div class='property-request' id='propertyRequest{propertyId}'>
+                    <img src='{imageUrl}' alt='Property Image' class='property-image'>
+                    <div class='property-details'>
+                        <h3>{propertyName}</h3>
+                        <p>Description: {description}</p>
+                        <p>Price: {price:C}</p>
+                        <p>Location: {location}</p>
+                    </div>
+                    <div class='property-actions'>
+                        <button class='btn-approve' onclick='approveReservation({propertyId})'>Approve</button>
+                        <button class='btn-reject' onclick='rejectReservation({propertyId})'>Reject</button>
+                    </div>
+                </div>";
+
+            propertyRequests.Controls.Add(new LiteralControl(propertyHtml));
+        }
+
+        // Methods for approving and rejecting reservations.
+        protected void ApproveReservation(int propertyId)
+        {
+            // Add logic to approve
+        }
+
+        protected void RejectReservation(int propertyId)
+        {
+            // Add logic for rejhecftinh 
+        }
     }
 }

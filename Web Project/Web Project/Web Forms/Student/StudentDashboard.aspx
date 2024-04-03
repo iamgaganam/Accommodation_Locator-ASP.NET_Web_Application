@@ -231,18 +231,10 @@
                 <div id="map" class="map"></div>
             </div>
         </div>
-        <!-- Approved properties section -->
-        <div class="approved-properties">
-            <h2>Reserved Properties</h2>
-            <div class="property-card">
-                <img src="approved_property_image.jpg" alt="Property Image" class="property-image">
-                <div class="property-details">
-                    <p>Description of the approved property 1...</p>
-                    <p>Price: $200,000</p>
-                    <p>Location: Los Angeles</p>
-                    <button class="view-details-btn">View Details</button>
-                </div>
-            </div>
+        <!-- Reserved properties section -->
+        <div class="approved-properties" runat="server" id="approvedProperties">
+            <h2>Accepted and Reserved Properties</h2>
+            <!-- Property cards will be dynamically added here -->
         </div>
 
         <!-- Awareness posts section -->
@@ -273,7 +265,6 @@
 
         </div>
     </form>
-
 
     <script>
         function initMap() {
