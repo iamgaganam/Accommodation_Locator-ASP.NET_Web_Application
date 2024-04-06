@@ -48,7 +48,7 @@ namespace Web_Project.Web_Forms.Admin
 
         private void InsertArticle(string title, string content)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["ArticlesConStr"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
 
             string query = @"INSERT INTO Articles (Title, Content, RegistrationDateTime)
                  VALUES (@Title, @Content, @RegistrationDateTime)";
@@ -85,7 +85,7 @@ namespace Web_Project.Web_Forms.Admin
 
         private void DisplayArticles()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["ArticlesConStr"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
 
             int startIndex = (currentPage - 1) * articlesPerPage;
             int endIndex = startIndex + articlesPerPage;
@@ -132,7 +132,7 @@ namespace Web_Project.Web_Forms.Admin
 
         private void DisplayPaginationLinks()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["ArticlesConStr"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
 
             // Count total number of articles
             string countQuery = "SELECT COUNT(*) FROM Articles";
@@ -239,7 +239,7 @@ namespace Web_Project.Web_Forms.Admin
 
         private void InsertUser(string tableName, string username, string password, string email, string firstName, string lastName, string phoneNumber)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["WardenLogConStr"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
 
             string query = $@"INSERT INTO {tableName} (Username, Password, Email, FirstName, LastName, PhoneNumber, RegistrationDate)
                              VALUES (@Username, @Password, @Email, @FirstName, @LastName, @PhoneNumber, @RegistrationDate)";

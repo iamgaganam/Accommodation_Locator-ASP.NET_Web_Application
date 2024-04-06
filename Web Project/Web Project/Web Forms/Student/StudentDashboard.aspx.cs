@@ -25,7 +25,7 @@ namespace Web_Project.Web_Forms.Student
         {
             propertyCardsContainer.Controls.Clear();
 
-            string connectionString = ConfigurationManager.ConnectionStrings["PropertiesConStr"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -91,7 +91,7 @@ namespace Web_Project.Web_Forms.Student
             int postsPerPage = 5;
             int offset = (pageNumber - 1) * postsPerPage;
 
-            string connectionString = ConfigurationManager.ConnectionStrings["PropertiesConStr"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -132,7 +132,7 @@ namespace Web_Project.Web_Forms.Student
 
         private void CalculateTotalPages()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["PropertiesConStr"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

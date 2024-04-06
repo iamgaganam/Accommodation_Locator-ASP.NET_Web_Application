@@ -49,7 +49,7 @@ namespace Web_Project.Web_Forms.Landlord
                         propertyImage.SaveAs(Server.MapPath(imagePath));
 
                         // Insert property into database
-                        string connectionString = ConfigurationManager.ConnectionStrings["PropertiesConStr"].ConnectionString;
+                        string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
                         using (SqlConnection connection = new SqlConnection(connectionString))
                         {
                             string query = @"INSERT INTO Properties (name, description, price, location, imageUrl, latitude, longitude, LandlordID)
@@ -123,7 +123,7 @@ namespace Web_Project.Web_Forms.Landlord
             // Get the logged-in landlord ID for automation.
             int landlordID = GetLoggedInLandlordID();
 
-            string connectionString = ConfigurationManager.ConnectionStrings["PropertiesConStr"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string query = "SELECT id, name, description, price, location, imageUrl, latitude, longitude FROM Properties WHERE LandlordID = @LandlordID ORDER BY id DESC";
@@ -204,7 +204,7 @@ namespace Web_Project.Web_Forms.Landlord
         // Delete Feature.
         private void DeleteProperty(int propertyID)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["PropertiesConStr"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string query = "DELETE FROM Properties WHERE id = @PropertyID";

@@ -38,7 +38,7 @@ namespace Web_Project.Web_Forms.Landlord
 
         private bool ValidateLogin(string username, string password)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["LandlordRegConStr"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

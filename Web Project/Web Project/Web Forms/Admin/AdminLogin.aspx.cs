@@ -18,7 +18,7 @@ namespace Web_Project.Web_Forms.Admin
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["AdminConStr"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 string query = "SELECT * FROM Admin WHERE Username = @Username AND Password = @Password";

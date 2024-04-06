@@ -226,6 +226,7 @@
     <Compile Include="Web Forms\Admin\AdminLogin.aspx.designer.cs">
       <DependentUpon>AdminLogin.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Web Forms\DatabaseData.cs" />
     <Compile Include="Web Forms\HomePage.aspx.cs">
       <DependentUpon>HomePage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
