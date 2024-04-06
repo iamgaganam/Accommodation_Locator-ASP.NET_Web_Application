@@ -16,9 +16,9 @@ namespace Web_Project.Web_Forms.Warden
 
         }
 
-        protected void btnLogin_Click(object sender, EventArgs e)
+        protected void Login(object sender, EventArgs e)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 string query = "SELECT * FROM Warden WHERE Username = @Username AND Password = @Password";

@@ -96,7 +96,7 @@
                 <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" required />
             </div>
             <div>
-                <asp:Button ID="btnLogin" runat="server" Text="Login" OnClick="btnLogin_Click" />
+                <asp:Button ID="btnLogin" runat="server" Text="Login" OnClick="Login" />
             </div>
             <div>
                 <p>Don't have an account? Contact NSBM Web Master! </p>

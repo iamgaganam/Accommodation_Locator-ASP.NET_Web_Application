@@ -178,7 +178,7 @@
                 <asp:TextBox runat="server" ID="propertyLongitude" /><br />
                 <asp:Label runat="server" AssociatedControlID="propertyImage" Text="Image:" /><br />
                 <asp:FileUpload runat="server" ID="propertyImage" /><br />
-                <asp:Button runat="server" ID="btnAddProperty" Text="Add Property" OnClick="btnAddProperty_Click" />
+                <asp:Button runat="server" ID="btnAddProperty" Text="Add Property" OnClick="AddProperty" />
             </asp:Panel>
         </div>
 

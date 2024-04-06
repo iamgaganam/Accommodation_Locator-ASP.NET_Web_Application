@@ -22,11 +22,11 @@ namespace Web_Project.Web_Forms
 
     public class DatabaseData
     {
-        private const string connectionString = "testDBConnection";
+        public static string ConnectionString { private set; get; } = "testDBConnection";
 
         public static List<PropertyData> GetProperties(string constraint = "") 
         {
-            string connectionStr = ConfigurationManager.ConnectionStrings[connectionString].ConnectionString.ToString();
+            string connectionStr = ConfigurationManager.ConnectionStrings[ConnectionString].ConnectionString.ToString();
 
             using (SqlConnection connection = new SqlConnection(connectionStr))
             {

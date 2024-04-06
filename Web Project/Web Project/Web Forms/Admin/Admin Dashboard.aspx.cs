@@ -7,6 +7,9 @@ namespace Web_Project.Web_Forms.Admin
 {
     public partial class Admin_Dashboard : System.Web.UI.Page
     {
+        private int currentPage = 1;
+        private int articlesPerPage = 5;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -15,10 +18,24 @@ namespace Web_Project.Web_Forms.Admin
             }
         }
 
-        private int currentPage = 1;
-        private int articlesPerPage = 5;
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                if (Request.QueryString["page"] != null)
+                {
+                    int page;
+                    if (int.TryParse(Request.QueryString["page"], out page))
+                    {
+                        currentPage = page;
+                        articleContainer.InnerHtml = string.Empty;
+                        DisplayArticles();
+                    }
+                }
+            }
+        }
 
-        protected void btnRegister_Click(object sender, EventArgs e)
+        protected void RegisterUser(object sender, EventArgs e)
         {
             string userType = userTypeDropdown.SelectedValue;
 
@@ -38,7 +55,7 @@ namespace Web_Project.Web_Forms.Admin
             }
         }
 
-        protected void btnPostArticle_Click(object sender, EventArgs e)
+        protected void PostArticle(object sender, EventArgs e)
         {
             string title = articleTitle.Value.Trim();
             string content = articleContent.Value.Trim();
@@ -48,7 +65,7 @@ namespace Web_Project.Web_Forms.Admin
 
         private void InsertArticle(string title, string content)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
 
             string query = @"INSERT INTO Articles (Title, Content, RegistrationDateTime)
                  VALUES (@Title, @Content, @RegistrationDateTime)";
@@ -85,7 +102,7 @@ namespace Web_Project.Web_Forms.Admin
 
         private void DisplayArticles()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
 
             int startIndex = (currentPage - 1) * articlesPerPage;
             int endIndex = startIndex + articlesPerPage;
@@ -132,7 +149,7 @@ namespace Web_Project.Web_Forms.Admin
 
         private void DisplayPaginationLinks()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
 
             // Count total number of articles
             string countQuery = "SELECT COUNT(*) FROM Articles";
@@ -184,23 +201,6 @@ namespace Web_Project.Web_Forms.Admin
             articleContainer.InnerHtml += paginationHtml;
         }
 
-        protected void Page_PreRender(object sender, EventArgs e)
-        {
-            if (!IsPostBack)
-            {
-                if (Request.QueryString["page"] != null)
-                {
-                    int page;
-                    if (int.TryParse(Request.QueryString["page"], out page))
-                    {
-                        currentPage = page;
-                        articleContainer.InnerHtml = string.Empty;
-                        DisplayArticles();
-                    }
-                }
-            }
-        }
-
         private void RegisterLandlord()
         {
             string username = txtUsername.Text.Trim();
@@ -239,7 +239,7 @@ namespace Web_Project.Web_Forms.Admin
 
         private void InsertUser(string tableName, string username, string password, string email, string firstName, string lastName, string phoneNumber)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
 
             string query = $@"INSERT INTO {tableName} (Username, Password, Email, FirstName, LastName, PhoneNumber, RegistrationDate)
                              VALUES (@Username, @Password, @Email, @FirstName, @LastName, @PhoneNumber, @RegistrationDate)";

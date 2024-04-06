@@ -223,25 +223,12 @@
         <h1 style="text-align: center;">Student Dashboard</h1>
         <div class="container">
             <div class="sidebar">
-                <div class="property-cards-container" runat="server" id="propertyCardsContainer">
+                <div class="property-cards-container js-property-container" runat="server" id="propertyCardsContainer">
                     <!-- Property cards will be dynamically loaded here -->
                 </div>
             </div>
             <div class="map-container">
                 <div id="map" class="map"></div>
-            </div>
-        </div>
-        <!-- Approved properties section -->
-        <div class="approved-properties">
-            <h2>Reserved Properties</h2>
-            <div class="property-card">
-                <img src="approved_property_image.jpg" alt="Property Image" class="property-image">
-                <div class="property-details">
-                    <p>Description of the approved property 1...</p>
-                    <p>Price: $200,000</p>
-                    <p>Location: Los Angeles</p>
-                    <button class="view-details-btn">View Details</button>
-                </div>
             </div>
         </div>
 
@@ -276,32 +263,65 @@
 
 
     <script>
+        // instantiate approved properties
+        var approvedProperties = <%= approvedPropertiesJson %>;
+
+        var approvedPropertyContainer = document.querySelector('.js-property-container');
+
+        for (let x in approvedProperties) {
+            const propertyCardHtml = `
+                <div class='property-card'>
+                    <img src='${approvedProperties[x].imageUrl}' class='property-image' />
+                    <div class='property-details'>
+                        <h3>${approvedProperties[x].name}</h3>
+                        <p>${approvedProperties[x].description}</p>
+                        <p>${approvedProperties[x].location}</p>
+                        <p> Price: ${approvedProperties[x].price}</p>
+                        <div class='action-buttons'>
+                                <button class='view-details-btn' 
+                            data-lat='${approvedProperties[x].latitude}' 
+                            data-lng='${approvedProperties[x].longitude}'>View Details</button>
+                            <div>
+                                <button class='approve-btn'>Reserve</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            approvedPropertyContainer.innerHTML += propertyCardHtml;
+        }
+
         function initMap() {
-            var map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: 6.822415694864501, lng: 80.04180893495239 }, // Set default center
-                zoom: 15 // Set default zoom level
-            });
+            const nsbmPos = new google.maps.LatLng(6.8206348, 80.0385984);
 
-            // Retrieve all buttons with class 'view-details-btn'
-            var viewButtons = document.querySelectorAll('.view-details-btn');
+            var mapProp = {
+                center: nsbmPos,
+                zoom: 15,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
 
-            // Loop through each button to add click event listener
-            viewButtons.forEach(function (button) {
-                button.addEventListener('click', function () {
-                    var latitude = parseFloat(this.getAttribute('data-lat'));
-                    var longitude = parseFloat(this.getAttribute('data-lng'));
+            var map = new google.maps.Map(document.getElementById("map"), mapProp);
 
-                    // Create marker
-                    var marker = new google.maps.Marker({
-                        position: { lat: latitude, lng: longitude },
-                        map: map,
-                        title: 'Property Location'
-                    });
+            var infoWindow = new google.maps.InfoWindow();
 
-                    // Set map center to marker position
-                    map.setCenter({ lat: latitude, lng: longitude });
+            var marker, i;
+
+            for (i = 0; i < approvedProperties.length; i++) {
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(approvedProperties[i].latitude, approvedProperties[i].longitude),
+                    animation: google.maps.Animation.BOUNCE,
+                    map: map
                 });
-            });
+
+                google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                    return function () {
+                        // event instantiated here add external logic
+                        infoWindow.setContent(approvedProperties[i].name);
+                        infoWindow.open(map, marker);
+                    }
+                })(marker, i));
+            }
         }
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVy90FE4evtixL-8e0avAziJz0aajSI7I&callback=initMap"></script>

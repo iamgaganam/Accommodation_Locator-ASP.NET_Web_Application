@@ -174,7 +174,7 @@
             <asp:TextBox ID="txtLastName" runat="server" /><br />
             <label for="txtPhoneNumber">Phone Number:</label>
             <asp:TextBox ID="txtPhoneNumber" runat="server" /><br />
-            <asp:Button ID="btnRegister" runat="server" Text="Register" OnClick="btnRegister_Click" />
+            <asp:Button ID="btnRegister" runat="server" Text="Register" OnClick="RegisterUser" />
 
             <!-- Article Posting -->
             <h2>Article Posting</h2>
@@ -182,7 +182,7 @@
             <input type="text" id="articleTitle" runat="server" /><br />
             <label for="articleContent">Content:</label>
             <textarea id="articleContent" runat="server" rows="5"></textarea><br />
-            <asp:Button ID="btnPostArticle" runat="server" Text="Post Article" OnClick="btnPostArticle_Click" OnClientClick="return validateArticleForm();" />
+            <asp:Button ID="btnPostArticle" runat="server" Text="Post Article" OnClick="PostArticle" OnClientClick="return validateArticleForm();" />
         </form>
     </div>
     <div>

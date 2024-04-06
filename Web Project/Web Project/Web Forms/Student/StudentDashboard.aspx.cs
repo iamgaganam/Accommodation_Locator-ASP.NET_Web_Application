@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Web.UI;
@@ -10,88 +12,32 @@ namespace Web_Project.Web_Forms.Student
         protected int totalPages;
         protected int currentPage;
 
+        public string approvedPropertiesJson { get; private set; }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 currentPage = Request.QueryString["page"] != null ? Convert.ToInt32(Request.QueryString["page"]) : 1;
-                LoadProperties();
+                LoadApprovedProperties();
                 LoadAwarenessPosts(currentPage);
                 CalculateTotalPages();
             }
         }
 
-        private void LoadProperties()
+        private void LoadApprovedProperties()
         {
-            propertyCardsContainer.Controls.Clear();
+            string constraint = "WHERE status = 1 ORDER BY id DESC";
+            List<PropertyData> propertyData = DatabaseData.GetProperties(constraint);
 
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                string query = "SELECT id, name, description, location, price, imageUrl, latitude, longitude FROM Properties WHERE status = 1 ORDER BY id DESC";
-
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    connection.Open();
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            // Retrieve property data
-                            int propertyId = Convert.ToInt32(reader["id"]);
-                            string propertyName = reader["name"].ToString();
-                            string propertyDescription = reader["description"].ToString();
-                            string propertyLocation = reader["location"].ToString();
-                            decimal propertyPrice = Convert.ToDecimal(reader["price"]);
-                            string propertyImageUrl = reader["imageUrl"].ToString();
-
-                            // Check for DBNull for latitude and longitude
-                            double latitude = 0.0;
-                            double longitude = 0.0;
-                            if (!reader.IsDBNull(reader.GetOrdinal("latitude")))
-                            {
-                                latitude = Convert.ToDouble(reader["latitude"]);
-                            }
-                            if (!reader.IsDBNull(reader.GetOrdinal("longitude")))
-                            {
-                                longitude = Convert.ToDouble(reader["longitude"]);
-                            }
-                            // Created HTML content for each property card
-                            string propertyCardHtml = $@"
-<div class='property-card'>
-    <img src='{propertyImageUrl}' class='property-image' />
-    <div class='property-details'>
-        <h3>{propertyName}</h3>
-        <p>{propertyDescription}</p>
-        <p>{propertyLocation}</p>
-        <p> Price: {propertyPrice:C}</p>
-        <div class='action-buttons'>
-            <button class='view-details-btn' 
-        data-lat='{latitude}' 
-        data-lng='{longitude}'>View Details</button>
-
-            <div>
-                <button class='approve-btn'>Reserve</button>
-            </div>
-        </div>
-    </div>
-</div>";
-                            // Add the property card HTML to the propertyCardsContainer
-                            propertyCardsContainer.Controls.Add(new LiteralControl(propertyCardHtml));
-                        }
-                    }
-                }
-            }
-
+            approvedPropertiesJson = JsonConvert.SerializeObject(propertyData);
         }
-
         private void LoadAwarenessPosts(int pageNumber)
         {
             int postsPerPage = 5;
             int offset = (pageNumber - 1) * postsPerPage;
 
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -114,13 +60,13 @@ namespace Web_Project.Web_Forms.Student
 
                             // Create HTML content for awareness post card
                             string awarenessPostCardHtml = $@"
-<div class='property-card awareness-post-card'>
-    <div class='property-details'>
-        <h3>{title}</h3>
-        <p>{content}</p>
-        <p>Posted On: {registrationDateTime.ToString("MMMM dd, yyyy, hh:mm tt")}</p>
-    </div>
-</div>";
+                            <div class='property-card awareness-post-card'>
+                                <div class='property-details'>
+                                    <h3>{title}</h3>
+                                    <p>{content}</p>
+                                    <p>Posted On: {registrationDateTime.ToString("MMMM dd, yyyy, hh:mm tt")}</p>
+                                </div>
+                            </div>";
 
                             // Add the awareness post card HTML to the page
                             awarenessPostCardsContainer.Controls.Add(new LiteralControl(awarenessPostCardHtml));
@@ -132,7 +78,7 @@ namespace Web_Project.Web_Forms.Student
 
         private void CalculateTotalPages()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

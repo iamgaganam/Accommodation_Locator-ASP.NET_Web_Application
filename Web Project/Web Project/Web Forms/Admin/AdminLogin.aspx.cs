@@ -16,9 +16,10 @@ namespace Web_Project.Web_Forms.Admin
 
         }
 
-        protected void btnLogin_Click(object sender, EventArgs e)
+        protected void Login(object sender, EventArgs e)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
+
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 string query = "SELECT * FROM Admin WHERE Username = @Username AND Password = @Password";
@@ -28,6 +29,7 @@ namespace Web_Project.Web_Forms.Admin
                     cmd.Parameters.AddWithValue("@Password", txtPassword.Text.Trim());
                     con.Open();
                     SqlDataReader reader = cmd.ExecuteReader();
+
                     if (reader.HasRows)
                     {
                         // Login successful
@@ -35,7 +37,7 @@ namespace Web_Project.Web_Forms.Admin
                         {
                             Session["AdminID"] = reader["AdminID"].ToString();
                             Session["Username"] = reader["Username"].ToString();
-                            Response.Redirect("AdminDashboard.aspx");
+                            Response.Redirect("Admin Dashboard.aspx");
                         }
                     }
                     else

@@ -289,6 +289,7 @@
 
                 google.maps.event.addListener(marker, 'click', (function (marker, i) {
                     return function () {
+                        // event instantiated here add external logic
                         infoWindow.setContent(properties[i].name);
                         infoWindow.open(map, marker);
                     }

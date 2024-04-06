@@ -16,7 +16,7 @@ namespace Web_Project.Web_Forms.Landlord
 
         }
 
-        protected void btnLogin_Click(object sender, EventArgs e)
+        protected void Login(object sender, EventArgs e)
         {
             string username = txtUsername.Text;
             string password = txtPassword.Text;
@@ -38,7 +38,7 @@ namespace Web_Project.Web_Forms.Landlord
 
         private bool ValidateLogin(string username, string password)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

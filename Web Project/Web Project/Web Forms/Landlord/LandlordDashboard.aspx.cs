@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -15,15 +14,15 @@ namespace Web_Project.Web_Forms.Landlord
             // Not the way if statement is used but thats that! 
             if (!IsPostBack)
             {
-                LoadProperties();
+                LoadLandlordProperties();
             }
             else
             {
-                LoadProperties();
+                LoadLandlordProperties();
             }
         }
 
-        protected void btnAddProperty_Click(object sender, EventArgs e)
+        protected void AddProperty(object sender, EventArgs e)
         {
             // Validate form fields
             if (ValidateForm())
@@ -49,7 +48,7 @@ namespace Web_Project.Web_Forms.Landlord
                         propertyImage.SaveAs(Server.MapPath(imagePath));
 
                         // Insert property into database
-                        string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+                        string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
                         using (SqlConnection connection = new SqlConnection(connectionString))
                         {
                             string query = @"INSERT INTO Properties (name, description, price, location, imageUrl, latitude, longitude, LandlordID)
@@ -73,7 +72,7 @@ namespace Web_Project.Web_Forms.Landlord
                         }
 
                         // Reload properties list after adding a new property
-                        LoadProperties();
+                        LoadLandlordProperties();
                     }
                     else
                     {
@@ -106,24 +105,24 @@ namespace Web_Project.Web_Forms.Landlord
             return true;
         }
 
-        protected void btnDelete_Click(object sender, EventArgs e)
+        protected void DeleteProperty_OnClick(object sender, EventArgs e)
         {
             Button btnDelete = (Button)sender;
             int propertyID = Convert.ToInt32(btnDelete.CommandArgument);
 
-            DeleteProperty(propertyID);
-
-            LoadProperties();
+            DeletePropertyFromDB(propertyID);
+            LoadLandlordProperties();
         }
 
-        private void LoadProperties()
+        // Select properties based on landlord ID
+        private void LoadLandlordProperties()
         {
             propertyList.Controls.Clear();
 
             // Get the logged-in landlord ID for automation.
             int landlordID = GetLoggedInLandlordID();
 
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string query = "SELECT id, name, description, price, location, imageUrl, latitude, longitude FROM Properties WHERE LandlordID = @LandlordID ORDER BY id DESC";
@@ -131,6 +130,7 @@ namespace Web_Project.Web_Forms.Landlord
                 command.Parameters.AddWithValue("@LandlordID", landlordID);
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
+
                 while (reader.Read())
                 {
                     HtmlGenericControl li = new HtmlGenericControl("li");
@@ -175,7 +175,7 @@ namespace Web_Project.Web_Forms.Landlord
                     btnDelete.Text = "Delete";
                     btnDelete.CssClass = "btn-delete";
                     btnDelete.CommandArgument = reader["id"].ToString();
-                    btnDelete.Click += new EventHandler(btnDelete_Click);
+                    btnDelete.Click += new EventHandler(DeleteProperty_OnClick);
 
                     li.Controls.Add(btnDelete);
 
@@ -202,14 +202,16 @@ namespace Web_Project.Web_Forms.Landlord
         }
 
         // Delete Feature.
-        private void DeleteProperty(int propertyID)
+        private void DeletePropertyFromDB(int propertyID)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["testDBConnection"].ConnectionString;
+            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
+
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string query = "DELETE FROM Properties WHERE id = @PropertyID";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@PropertyID", propertyID);
+
                 connection.Open();
                 command.ExecuteNonQuery();
             }

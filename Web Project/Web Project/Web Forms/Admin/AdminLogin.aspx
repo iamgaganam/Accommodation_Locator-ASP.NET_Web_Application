@@ -105,7 +105,7 @@
                 <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" placeholder="Enter your password" required />
             </div>
             <div>
-                <asp:Button ID="btnLogin" runat="server" Text="Login" OnClick="btnLogin_Click" />
+                <asp:Button ID="btnLogin" runat="server" Text="Login" OnClick="Login" />
             </div>
             <div>
                 <p>Don't have an account? <a href="#">Contact NSBM!</a></p>
