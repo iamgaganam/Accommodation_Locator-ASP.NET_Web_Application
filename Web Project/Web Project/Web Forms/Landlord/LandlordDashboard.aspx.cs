@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -9,16 +13,14 @@ namespace Web_Project.Web_Forms.Landlord
 {
     public partial class LandlordDashboard : System.Web.UI.Page
     {
+        public string reservedPropertiesJson { private set; get; }
         protected void Page_Load(object sender, EventArgs e)
         {
             // Not the way if statement is used but thats that! 
             if (!IsPostBack)
             {
                 LoadLandlordProperties();
-            }
-            else
-            {
-                LoadLandlordProperties();
+                LoadRequestedProperties();
             }
         }
 
@@ -121,6 +123,7 @@ namespace Web_Project.Web_Forms.Landlord
 
             // Get the logged-in landlord ID for automation.
             int landlordID = GetLoggedInLandlordID();
+            Debug.WriteLine("Landlord id: " + landlordID);
 
             string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -185,36 +188,48 @@ namespace Web_Project.Web_Forms.Landlord
             }
         }
 
+        private void LoadRequestedProperties() 
+        {
+            reservedPropertiesJson = JsonConvert.SerializeObject(DatabaseData.GetReservedPropertiesLandlord(GetLoggedInLandlordID()));
+        }
+
         private int GetLoggedInLandlordID()
         {
-            // Tried to take session and get the id but not working :(
+            string username = Session["Username"]?.ToString();
 
-            //if (Session["LandlordID"] != null)
-            //{
-            //    return Convert.ToInt32(Session["LandlordID"]);
-            //}
-            //else
-            //{
-            //    return 0;
-            //}
+            if (Session["Username"] != null) 
+            {
+                string connectionStr = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString.ToString();
+                using (SqlConnection connection = new SqlConnection(connectionStr))
+                {
+                    connection.Open();
+                    string query = $"SELECT LandlordID FROM Landlords WHERE Username=@username";
 
-            return 6; // So what it does is, it returns the landlord id manually for now. its working.
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@username", username);
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read()) 
+                            {
+                                int landlordId = Convert.ToInt32(reader["LandlordID"]);
+
+                                return landlordId;
+                            }
+                        }
+                    }
+                    
+                }
+            }
+
+            return -1;
         }
 
         // Delete Feature.
         private void DeletePropertyFromDB(int propertyID)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings[DatabaseData.ConnectionString].ConnectionString;
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                string query = "DELETE FROM Properties WHERE id = @PropertyID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@PropertyID", propertyID);
-
-                connection.Open();
-                command.ExecuteNonQuery();
-            }
+            DatabaseData.DeleteProperty(propertyID);
         }
 
     }

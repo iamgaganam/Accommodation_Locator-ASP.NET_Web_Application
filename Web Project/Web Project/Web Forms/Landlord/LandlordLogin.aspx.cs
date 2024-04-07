@@ -56,6 +56,5 @@ namespace Web_Project.Web_Forms.Landlord
                 }
             }
         }
-
     }
 }

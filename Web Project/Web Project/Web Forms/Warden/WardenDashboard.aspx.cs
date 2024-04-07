@@ -6,7 +6,12 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Net;
+using System.Web.Profile;
+using System.Web.Script.Services;
+using System.Web.Services;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace Web_Project.Web_Forms.Warden
 {
@@ -23,6 +28,21 @@ namespace Web_Project.Web_Forms.Warden
                 LoadProperties();
                 LoadApprovedProperties();
                 LoadRejectedProperties();
+            }
+        }
+
+        [WebMethod]
+        public static void ApproveOrRejectProperty(string propertyId, string action)
+        {
+            int id = int.Parse(propertyId);
+
+            if (action == "approve")
+            {
+                DatabaseData.UpdateProperty(id, 1);
+            }
+            else if (action == "reject")
+            {
+                DatabaseData.UpdateProperty(id, 0);
             }
         }
 
@@ -49,7 +69,5 @@ namespace Web_Project.Web_Forms.Warden
 
             rejectedPropertiesJson = JsonConvert.SerializeObject(propertyData);
         }
-
-
     }
 }

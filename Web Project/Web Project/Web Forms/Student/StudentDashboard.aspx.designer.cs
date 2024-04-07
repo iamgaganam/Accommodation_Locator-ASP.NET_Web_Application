@@ -24,6 +24,15 @@ namespace Web_Project.Web_Forms.Student
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// hdnStudentId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnStudentId;
+
+        /// <summary>
         /// propertyCardsContainer control.
         /// </summary>
         /// <remarks>
@@ -31,6 +40,15 @@ namespace Web_Project.Web_Forms.Student
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl propertyCardsContainer;
+
+        /// <summary>
+        /// reservedCardsContainer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl reservedCardsContainer;
 
         /// <summary>
         /// awarenessPostCardsContainer control.

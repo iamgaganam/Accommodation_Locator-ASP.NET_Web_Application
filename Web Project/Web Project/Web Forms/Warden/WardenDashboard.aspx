@@ -6,6 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Property Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* CSS styles for property cards */
         .property-details .property-card {
@@ -127,10 +128,62 @@
             .reject-btn:hover {
                 background-color: #c82333;
             }
+
+        .card-container {
+                position: absolute;
+                bottom: 20px; /* Adjust as needed */
+                right: 60px; /* Adjust as needed */
+                width: 300px;
+                background-color: white;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                border-radius: 5px;
+                z-index: 1000; /* Ensure it appears above the map */
+                display: none; /* Initially hidden */
+            }
+
+            .image-container {
+                position: relative;
+                width: 100%;
+            }
+
+            .property-image {
+                width: 100%;
+                height: auto;
+                display: block;
+                border-radius: 5px 5px 0 0; /* Rounded borders only on top */
+            }
+
+            .price-overlay {
+                position: absolute;
+                bottom: 0;
+                right: 5px;
+                background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+                padding: 5px;
+                border-radius: 0 5px;
+            }
+
+            .property-price {
+                color: white;
+                font-weight: bold;
+            }
+
+            .property-details {
+                padding: 10px;
+            }
+
+            .property-name {
+                font-weight: bold;
+            }
+
+            .property-info {
+                margin-top: 5px;
+            }
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
+        <asp:HiddenField runat="server" ID="hdnPropertyId" ClientIDMode="Static" value=""/>
+
         <h1 style="text-align: center;">Warden Dashboard</h1>
         <div class="container">
             <div class="sidebar js-propertyCardContainer" runat="server" id="propertyCardsContainer">
@@ -138,6 +191,19 @@
             </div>
             <div class="map-container">
                 <div id="map" class="map"></div>
+
+                <div class="card-container" id="propertyCard">
+                    <div class="image-container">
+                        <div class="price-overlay">
+                            <span class="property-price"></span>
+                        </div>
+                        <img src="" alt="Property Image" class="property-image">
+                    </div>
+                    <div class="property-details">
+                        <div class="property-name"></div>
+                        <div class="property-info"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- Approved properties section -->
@@ -201,8 +267,8 @@
                                 data-lng='${properties[x].longitude}'>View Details</button>
 
                             <div>
-                                <button class='approve-btn'>Approve</button>
-                                <button class='reject-btn'>Reject</button>
+                                <button type="button" class='approve-btn' data-propertyid='${properties[x].id}'>Approve</button>
+                                <button type="button" class='reject-btn' data-propertyid='${properties[x].id}'>Reject</button>
                             </div>
                         </div>
                     </div>
@@ -212,6 +278,58 @@
             propertyContainer.innerHTML += propertyCardHtml;
         }
 
+        // Function to handle button clicks and perform action
+        function handleButtonClick(propertyId, action)
+        {
+            // Display confirmation dialog
+            if (confirm(`Are you sure you want to ${action} this property?`))
+            {
+                // Set the hidden field value
+                document.getElementById('hdnPropertyId').value = propertyId;
+
+                // Perform AJAX request to server
+                performAction(propertyId, action);
+            }
+        }
+
+        // Handle click events
+        propertyContainer.addEventListener('click', function (event)
+        {
+            const target = event.target;
+
+            if (target.classList.contains('approve-btn'))
+            {
+                handleButtonClick(target.getAttribute('data-propertyid'), 'approve');
+            }
+            else if (target.classList.contains('reject-btn'))
+            {
+                handleButtonClick(target.getAttribute('data-propertyid'), 'reject');
+            }
+        });
+
+        function performAction(propertyId, action)
+        {
+            // Perform AJAX request to server
+            $.ajax({
+                url: 'WardenDashboard.aspx/ApproveOrRejectProperty',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    propertyId: propertyId,
+                    action: action
+                }),
+                success: function (response) {
+                    // Handle success response
+                    window.location.reload();
+                },
+                error: function (xhr, status, error) {
+                    // Handle error
+                    console.error('Error:', error);
+                }
+            });
+        }
+
+
         // instantiate approved properties
         var approvedProperties = <%= approvedPropertiesJson %>;
 
@@ -220,7 +338,7 @@
         for (let x in approvedProperties) {
             const propertyCardHtml = `
                 <div class='property-card'>
-                    <img src='${approvedProperties[x].imageUrl}' class='property-image' />
+                    <img src='${approvedProperties[x].imageUrl}' style="width:150px; height:150px;"/>
                     <div class='property-details'>
                         <h3>${approvedProperties[x].name}</h3>
                         <p>${approvedProperties[x].description}</p>
@@ -246,7 +364,7 @@
         for (let x in rejectedProperties) {
             const propertyCardHtml = `
                 <div class='property-card'>
-                    <img src='${rejectedProperties[x].imageUrl}' class='property-image' />
+                    <img src='${rejectedProperties[x].imageUrl}' style="width:150px; height:150px;"/>
                     <div class='property-details'>
                         <h3>${rejectedProperties[x].name}</h3>
                         <p>${rejectedProperties[x].description}</p>
@@ -262,6 +380,25 @@
             `;
 
             rejectedPropertyContainer.innerHTML += propertyCardHtml;
+        }
+
+        function showPropertyCard(property)
+        {
+            var cardContainer = document.getElementById('propertyCard');
+            var propertyImage = cardContainer.querySelector('.property-image');
+            var propertyPrice = cardContainer.querySelector('.property-price');
+            var propertyName = cardContainer.querySelector('.property-name');
+            var propertyInfo = cardContainer.querySelector('.property-info');
+
+            // Set property data
+            propertyImage.src = property.imageUrl;
+            propertyImage.alt = property.imageUrl;
+            propertyPrice.textContent = "$" + property.price;
+            propertyName.textContent = property.name;
+            propertyInfo.textContent = property.description;
+
+            // Show the card container
+            cardContainer.style.display = 'block';
         }
 
         function initMap() {
@@ -290,8 +427,7 @@
                 google.maps.event.addListener(marker, 'click', (function (marker, i) {
                     return function () {
                         // event instantiated here add external logic
-                        infoWindow.setContent(properties[i].name);
-                        infoWindow.open(map, marker);
+                        showPropertyCard(properties[i]);
                     }
                 })(marker, i));
             }
