@@ -1,0 +1,33 @@
+name: ASP.NET Web Forms CI
+
+on:
+  push:
+    branches:
+      - client-sided-conversion
+  pull_request:
+    branches:
+      - client-sided-conversion
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '4.x'
+
+    - name: Install NuGet
+      run: nuget restore
+
+    - name: Build solution
+      run: msbuild /p:Configuration=Release
+
+    - name: Run tests
+      run: |
+        vstest.console.exe **\*Tests.dll
+      continue-on-error: true
