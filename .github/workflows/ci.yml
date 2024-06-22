@@ -3,10 +3,10 @@ name: ASP.NET Web Forms CI
 on:
   push:
     branches:
-      - client-sided-conversion
+      - main
   pull_request:
     branches:
-      - client-sided-conversion
+      - main
 
 jobs:
   build:
@@ -24,10 +24,5 @@ jobs:
 
     - name: Run tests
       run: |
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" **\*Tests.dll
-      continue-on-error: true
-
-    - name: Run tests
-      run: |
-        vstest.console.exe **\*Tests.dll
+        "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" **\*Tests.dll
       continue-on-error: true
